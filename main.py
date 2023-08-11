@@ -37,9 +37,10 @@ def train(name):
     cfg.DATALOADER.NUM_WORKERS = 2
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
         "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")  # Let training initialize from model zoo
-    cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
+    cfg.SOLVER.IMS_PER_BATCH = 4  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 12000  # 300 iterations seems good enough for this toy dataset; you will need to train longer for a practical dataset
+    # In detectron2, epoch is MAX_ITER * BATCH_SIZE / TOTAL_NUM_IMAGES -  (RSD-COCO : 7213 training images)
+    cfg.SOLVER.MAX_ITER = 360650#721300 #12000  # 300 iterations seems good enough for this toy dataset; you will need to train longer for a practical dataset
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.BACKBONE.FREEZE_AT = 10
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 8  # The "RoIHead batch size". 128 is faster, and good enough for this toy dataset (default: 512)
@@ -55,7 +56,7 @@ def train(name):
 
 
 
-def eval(name):
+def eval(name, checkpoint=None):
 
     if not os.path.exists("./output_val"):
         os.makedirs("./output_val")
@@ -77,7 +78,10 @@ def eval(name):
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 6
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     #cfg.MODEL.WEIGHTS = "runs/train4_6000/output/model_final.pth"
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    if checkpoint is None:
+        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    else:
+        cfg.MODEL.WEIGHTS = checkpoint
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7  # set a custom testing threshold
     predictor = DefaultPredictor(cfg)
 
@@ -92,7 +96,7 @@ def eval(name):
 
 
 
-def predict(name):
+def predict(name, checkpoint=None):
 
     if not os.path.exists("./output_pred"):
         os.makedirs("./output_pred")
@@ -114,7 +118,10 @@ def predict(name):
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 6
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     #cfg.MODEL.WEIGHTS = "runs/train3_3000/model_final.pth"
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    if checkpoint is None:
+        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    else:
+        cfg.MODEL.WEIGHTS = checkpoint
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7  # set a custom testing threshold
     predictor = DefaultPredictor(cfg)
 
@@ -143,6 +150,9 @@ def predict(name):
 
 if __name__ == '__main__':
     register_datasets('gg')
-    train('gg')
-    eval('gg')
-    predict('gg')
+    #train('gg')
+
+    #checkpoint = None
+    checkpoint = './outputnew/model_0059999.pth'
+    eval('gg',checkpoint)
+    predict('gg',checkpoint)

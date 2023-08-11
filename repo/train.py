@@ -28,7 +28,8 @@ def main(name):
         "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")  # Let training initialize from model zoo
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 1  # 300 iterations seems good enough for this toy dataset; you will need to train longer for a practical dataset
+    # In detectron2, epoch is MAX_ITER * BATCH_SIZE / TOTAL_NUM_IMAGES
+    cfg.SOLVER.MAX_ITER = 2000  # 300 iterations seems good enough for this toy dataset; you will need to train longer for a practical dataset
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 8  # The "RoIHead batch size". 128 is faster, and good enough for this toy dataset (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 5  # only has one class (ballon). (see https://detectron2.readthedocs.io/tutorials/datasets.html#update-the-config-for-new-datasets)
