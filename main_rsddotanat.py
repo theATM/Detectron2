@@ -10,12 +10,12 @@ from repo.detectron2.config import get_cfg
 
 def register_datasets(name):
     # register_coco_instances("RSD-GOD", {}, "json_annotation.json", "RSD-GOD")
-    register_coco_instances("RSD-COCO-train", {}, "RSD-COCO/train/_annotations.coco.json",
-                            "RSD-COCO/train/images")
-    register_coco_instances("RSD-COCO-val", {}, "RSD-COCO/valid/_annotations.coco.json",
-                            "RSD-COCO/valid/images")
-    register_coco_instances("RSD-COCO-test", {}, "RSD-COCO/test/_annotations.coco.json",
-                            "RSD-COCO/test/images")
+    register_coco_instances("RSD-COCO-DOTANA-T-train", {}, "RSD-COCO-DOTANA-T/annotations/instances_train.json",
+                            "RSD-COCO-DOTANA-T/images/train")
+    register_coco_instances("RSD-COCO-DOTANA-T-val", {}, "RSD-COCO-DOTANA-T/annotations/instances_val.json",
+                            "RSD-COCO-DOTANA-T/images/val")
+    register_coco_instances("RSD-COCO-DOTANA-T-test", {}, "RSD-COCO-DOTANA-T/annotations/instances_test.json",
+                            "RSD-COCO-DOTANA-T/images/test")
 
     from detectron2.structures import BoxMode
 
@@ -32,14 +32,15 @@ def train(name):
 
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml"))
-    cfg.DATASETS.TRAIN = ("RSD-COCO-train",)
+    cfg.DATASETS.TRAIN = ("RSD-COCO-DOTANA-T-train",)
     cfg.DATASETS.TEST = ()
     cfg.DATALOADER.NUM_WORKERS = 2
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
         "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")  # Let training initialize from model zoo
     cfg.SOLVER.IMS_PER_BATCH = 4  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    # In detectron2, epoch is MAX_ITER * BATCH_SIZE / TOTAL_NUM_IMAGES -  (RSD-COCO : 7213 training images)
+    # In detectron2, epoch is MAX_ITER * BATCH_SIZE / TOTAL_NUM_IMAGES -  (RSD-COCO-DOTANA-T : 7213 training images)
+    # 9020 images - 8254 have annotations
     cfg.SOLVER.MAX_ITER = 360650#721300 #12000  # 300 iterations seems good enough for this toy dataset; you will need to train longer for a practical dataset
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.BACKBONE.FREEZE_AT = 10
@@ -65,8 +66,8 @@ def eval(name, checkpoint=None):
     # Inference should use the config with parameters that are used in training
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml"))
-    #cfg.DATASETS.TRAIN = ("RSD-COCO-train",)
-    cfg.DATASETS.TEST = ("RSD-COCO-test",)
+    #cfg.DATASETS.TRAIN = ("RSD-COCO-DOTANA-T-train",)
+    cfg.DATASETS.TEST = ("RSD-COCO-DOTANA-T-test",)
     cfg.DATALOADER.NUM_WORKERS = 2
     #cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
     #    "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")  # Let training initialize from model zoo
@@ -87,8 +88,8 @@ def eval(name, checkpoint=None):
 
     from detectron2.evaluation import COCOEvaluator, inference_on_dataset, SemSegEvaluator, DatasetEvaluators
     from detectron2.data import build_detection_test_loader
-    evaluator = COCOEvaluator("RSD-COCO-test", output_dir="./output_val")
-    val_loader = build_detection_test_loader(cfg, "RSD-COCO-test")
+    evaluator = COCOEvaluator("RSD-COCO-DOTANA-T-test", output_dir="./output_val")
+    val_loader = build_detection_test_loader(cfg, "RSD-COCO-DOTANA-T-test")
     print(inference_on_dataset(predictor.model, val_loader, evaluator))
     # another equivalent way to evaluate the model is to use `trainer.test`
 
@@ -105,8 +106,8 @@ def predict(name, checkpoint=None):
     # Inference should use the config with parameters that are used in training
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml"))
-    #cfg.DATASETS.TRAIN = ("RSD-COCO-train",)
-    cfg.DATASETS.TEST = ("RSD-COCO-test",)
+    #cfg.DATASETS.TRAIN = ("RSD-COCO-DOTANA-T-train",)
+    cfg.DATASETS.TEST = ("RSD-COCO-DOTANA-T-test",)
     cfg.DATALOADER.NUM_WORKERS = 2
     #cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
     #    "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")  # Let training initialize from model zoo
@@ -129,8 +130,8 @@ def predict(name, checkpoint=None):
     from detectron2.utils.visualizer import Visualizer
     from detectron2.data import build_detection_test_loader
     from detectron2.data import MetadataCatalog, DatasetCatalog
-    dataset_metadata = MetadataCatalog.get("RSD-COCO-test")
-    dataset_dicts = build_detection_test_loader(cfg, "RSD-COCO-test")
+    dataset_metadata = MetadataCatalog.get("RSD-COCO-DOTANA-T-test")
+    dataset_dicts = build_detection_test_loader(cfg, "RSD-COCO-DOTANA-T-test")
 
     for d in dataset_dicts:
         im = cv2.imread(d[0]["file_name"])
@@ -155,4 +156,4 @@ if __name__ == '__main__':
     checkpoint = None
     #checkpoint = './outputnew/model_0059999.pth'
     eval('gg',checkpoint)
-    predict('gg',checkpoint)
+    #predict('gg',checkpoint)
