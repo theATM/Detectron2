@@ -15,4 +15,7 @@ runs
 .flake8
 *.pt
 *.pth
+*.pkl
 .clang-format
+*Log
+.Rhistory
