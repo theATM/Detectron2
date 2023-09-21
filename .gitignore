@@ -19,3 +19,5 @@ runs
 .clang-format
 *Log
 .Rhistory
+output*
+gdansk_bayX
