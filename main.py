@@ -10,12 +10,12 @@ from repo.detectron2.config import get_cfg
 
 def register_datasets(name):
     # register_coco_instances("RSD-GOD", {}, "json_annotation.json", "RSD-GOD")
-    register_coco_instances("RSD-COCO-train", {}, "RSD-COCO/annotations/instances_train.json",
-                            "RSD-COCO/images/train")
-    register_coco_instances("RSD-COCO-val", {}, "RSD-COCO/annotations/instances_val.json",
-                            "RSD-COCO/images/val")
-    register_coco_instances("RSD-COCO-test", {}, "RSD-COCO/annotations/instances_test.json",
-                            "RSD-COCO/images/test")
+    register_coco_instances("RSD-COCO-train", {}, "RSD-COCO/train/_annotations.coco.json",
+                            "RSD-COCO/train/images")
+    register_coco_instances("RSD-COCO-val", {}, "RSD-COCO/valid/_annotations.coco.json",
+                            "RSD-COCO/valid/images")
+    register_coco_instances("RSD-COCO-test", {}, "RSD-COCO/test/_annotations.coco.json",
+                            "RSD-COCO/test/images")
 
     from detectron2.structures import BoxMode
 
@@ -68,7 +68,7 @@ def eval(name, checkpoint=None, mode='val',id='0'):
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     #cfg.MODEL.WEIGHTS = "runs/train4_6000/output/model_final.pth"
     if checkpoint is None:
-        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+        cfg.MODEL.WEIGHTS = os.path.join(f"./output{id}", "model_final.pth")  # path to the model we just trained
     else:
         cfg.MODEL.WEIGHTS = checkpoint
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7  # set a custom testing threshold
@@ -131,24 +131,46 @@ def predict(name, checkpoint=None):
 if __name__ == '__main__':
     register_datasets('rsd')
 
-    # Train 1:
-    train('rsd',batch_size = 4,workers = 4,freeze=10,lr =  0.00025, epochs = 5, id='0')
-    eval('rsd',None,'val',id='0')
-    eval('rsd', None, 'test',id='0')
+    # Train 14:
+    #train('rsd',batch_size = 16,workers = 16,freeze=0,lr =  0.00025, epochs = 5, id='14')
+    #eval('rsd',None,'val',id='14')
+    #eval('rsd', None, 'test',id='14')
 
-    # Train 2:
-    train('rsd', batch_size = 4, workers = 4, freeze=0, lr =  0.00025, epochs = 5, id='1')
-    eval('rsd', None, 'val', id='1')
-    eval('rsd', None, 'test', id='1')
+    # Train 15:
+    #train('rsd', batch_size = 16, workers = 16, freeze=10, lr =  0.00025, epochs = 5, id='15')
+    #eval('rsd', None, 'val', id='15')
+    #eval('rsd', None, 'test', id='15')
 
-    # Train 2:
-    train('rsd', batch_size = 8, workers = 8, freeze=10, lr =  0.00025, epochs = 5, id='2')
-    eval('rsd', None, 'val', id='2')
-    eval('rsd', None, 'test', id='2')
+    # Train 16:
+    #train('rsd', batch_size = 8, workers = 8, freeze=5, lr =  0.00025, epochs = 5, id='16')
+    #eval('rsd', None, 'val', id='16')
+    #eval('rsd', None, 'test', id='16')
 
-    # Train 2:
-    train('rsd', batch_size = 8, workers = 8, freeze=0, lr =  0.00025, epochs = 5, id='3')
-    eval('rsd', None, 'val', id='3')
-    eval('rsd', None, 'test', id='3')
+    # Train 17:
+    #train('rsd', batch_size = 4, workers = 4, freeze=5, lr =  0.00025, epochs = 5, id='17')
+    #eval('rsd', None, 'val', id='17')
+    #eval('rsd', None, 'test', id='17')
+
+    # Train 18:
+    #train('rsd', batch_size = 16, workers = 16, freeze=5, lr =  0.00025, epochs = 5, id='18')
+    #eval('rsd', None, 'val', id='18')
+    #eval('rsd', None, 'test', id='18')
+
+    # Train 19:
+    #train('rsd', batch_size = 16, workers = 16, freeze=5, lr =  0.00025, epochs = 5, id='19')
+    #eval('rsd', None, 'val', id='19')
+    #eval('rsd', None, 'test', id='19')
+
+    # Train 20:
+    #checkpoint = "output20/model_final.pth"
+    #train('rsd', batch_size = 4, workers = 8, freeze=0, lr =  0.00025, epochs = 25, id='20')
+    #eval('rsd', None, 'val', id='20')
+    #eval('rsd', checkpoint, 'test', id='20')
+
+
+    checkpoint = "output1/model_final.pth"
+    #train('rsd', batch_size = 4, workers = 8, freeze=0, lr =  0.00025, epochs = 25, id='20')
+    #eval('rsd', None, 'val', id='20')
+    eval('rsd', checkpoint, 'test', id='11')
 
 
