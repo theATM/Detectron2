@@ -103,16 +103,18 @@ if __name__ == "__main__":
 
     if args.input:
         if len(args.input) == 1:
-            args.input = glob.glob(os.path.expanduser(args.input[0]))
-            assert args.input, "The input path(s) was not found"
-        for path in tqdm.tqdm(args.input, disable=not args.output):
+            imgs = os.listdir(args.input[0])
+            #args.input = glob.glob(os.path.expanduser(args.input[0]))
+            #assert args.input, "The input path(s) was not found"
+        for path in tqdm.tqdm(imgs, disable=not args.output):
             # use PIL, to be consistent with evaluation
-            img = read_image(path, format="BGR")
+            path2 = args.input[0] + path
+            img = read_image(path2, format="BGR")
             start_time = time.time()
             predictions, visualized_output = demo.run_on_image(img)
             logger.info(
                 "{}: {} in {:.2f}s".format(
-                    path,
+                    path2,
                     "detected {} instances".format(len(predictions["instances"]))
                     if "instances" in predictions
                     else "finished",
@@ -123,7 +125,7 @@ if __name__ == "__main__":
             if args.output:
                 if os.path.isdir(args.output):
                     assert os.path.isdir(args.output), args.output
-                    out_filename = os.path.join(args.output, os.path.basename(path))
+                    out_filename = os.path.join(args.output, os.path.basename(path2))
                 else:
                     assert len(args.input) == 1, "Please specify a directory with args.output"
                     out_filename = args.output
