@@ -2,6 +2,7 @@
 ## For the AirDetection Master Thesis
 
 This Repository has been used to produce the Faster R-CNN models used in the remote sensing obejct detection. 
+It is a part of the AirDetection study. The Main repo can be found [under this link](https://github.com/theATM/AirDetection).
 
 [Original Detectron2 README](repo/README.md)
 
