@@ -3,6 +3,8 @@
 
 This Repository has been used to produce the Faster R-CNN models used in the remote sensing obejct detection. 
 
+[Original Detectron2 README](repo/README.md)
+
 The models are trained on the RSD-GOD dataset.
 
 ## Usage
@@ -21,3 +23,6 @@ To detect on custom images run the repo/demo/demo.py script with those params:
 ## Results
 
 ![Untitled](https://github.com/theATM/Detectron2/assets/48883111/76fa0c30-6fd9-44a4-a7ff-a9247f028e55)
+
+Pretrained R20 Model [Here](https://drive.google.com/file/d/1ICOF3mc-WDt6NJP8HTzpbhPZZ9RJBPuI/view?usp=sharing)
+
